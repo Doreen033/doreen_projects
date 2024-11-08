@@ -1,0 +1,15 @@
+create database library;
+use library;
+create table authors(  authors_id int unsigned not null primary key auto_increment,  authors_first_name varchar(255) not null,  authors_last_name varchar(300) not null,  authors_contact varchar(150));
+create table books( books_id int unsigned not null primary key auto_increment, authors_id int unsigned, books_name varchar(250) not null, genre varchar(150) not null, foreign key (authors_id) references authors(authors_id));
+create table borrowers( borrowers_id int unsigned not null primary key auto_increment, borrowers_first_name varchar(200) not null, borrowers_last_name varchar(150) not null, borrowers_contact varchar(250) not null, borrowers_residential_address text not null, borrowera_email_address varchar(250));
+create table borrowed_books( borrowed_books_id int unsigned not null primary key auto_increment, books_id int unsigned, borrowers_id int unsigned, date_borrowed date not null, date_to_return date not null, is_returned boolean default false, foreign key (books_id) references books(books_id), foreign key (borrowers_id) references borrowers(borrowers_id));
+show create table authors;
+insert into authors(authors_first_name,authors_last_name) values ('Chinua','Achebe');
+insert into authors(authors_first_name,authors_last_name) values ('Chimamanda','Adichie');
+insert into books(authors_id,books_name,genre) values ((select authors_id from authors where authors_first_name= 'Chinua' and authors_last_name ='Achebe' limit 1),'Things fall Apart','literature');
+insert into books(authors_id,books_name,genre) values ((select authors_id from authors where authors_first_name= 'Chimamanda' and authors_last_name ='Adichie' limit 1),'Purple Hibiscus','literature');
+insert into borrowers(borrowers_first_name,borrowers_last_name,borrowers_contact,borrowers_residential_address,borrowers_email_address) values ('Charity','Ugwuoko',+2348123456789,'No 23 Ebony Paint Rd','charityugwuoko@gmail.com');
+select count(*) from borrowed_books bb join borrowers b on bb.borrowers_id = b.borrowers_id where b.borrowers_first_name ='chisom' and b.borrowers_last_name= 'pascal'and bb.is_returned= false;
+select b.borrowers_first_name as first_name, b.borrowers_last_name as last_name,bk.books_name as book_title,bb.date_borrowed,bb.date_to_return,bb.is_returned from borrowed_books bb join borrowers b on bb.borrowers_id = b.borrowers_id join books bk on bb.books_id = bk.books_id where b.borrowers_first_name = 'faith' and b.borrowers_last_name ='Chinenye';
+update borrowed_books bb join borrowers b on bb.borrowers_id = b.borrowers_id join books bk on bb.books_id = bk.books_id set bb.is_returned = true where b.borrowers_first_name = 'faith' and b.borrowers_last_name ='Chinenye';
